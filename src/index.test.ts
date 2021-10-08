@@ -1,4 +1,4 @@
-import { cleanup } from './index';
+import cleanup from './index';
 
 const mockExit = jest.spyOn(process, 'exit');
 
@@ -16,6 +16,7 @@ beforeEach(() => {
 describe('mock exit', () => {
     it('does not actually exit', () => {
         process.exit(0);
+
         // @ts-ignore: code is actually reachable
         expect(mockExit).toBeCalledTimes(1);
     });
@@ -25,11 +26,10 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
     it('calls a synchronous function after it is scheduled', () => {
         const task = jest.fn(() => {});
 
-        const scheduler = cleanup();
-
-        scheduler(task);
+        cleanup(task);
 
         process.exit(0);
+
         // @ts-ignore: code is actually reachable
         expect(task).toBeCalledTimes(1);
         // @ts-ignore: code is actually reachable
@@ -40,6 +40,7 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
         const task = jest.fn(() => {});
 
         process.exit(0);
+
         // @ts-ignore: code is actually reachable
         expect(task).not.toBeCalled();
         // @ts-ignore: code is actually reachable
@@ -50,12 +51,11 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
         const task = jest.fn(() => {});
         const otherTask = jest.fn(() => {});
 
-        const scheduler = cleanup();
-
-        scheduler(task);
-        scheduler(otherTask);
+        cleanup(task);
+        cleanup(otherTask);
 
         process.exit(0);
+
         // @ts-ignore: code is actually reachable
         expect(task).toBeCalledTimes(1);
         // @ts-ignore: code is actually reachable
@@ -68,19 +68,55 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
         const task = jest.fn(() => {});
         const otherTask = jest.fn(() => {});
 
-        const scheduler = cleanup();
+        const remover = cleanup(task);
 
-        const remover = scheduler(task);
-
-        scheduler(otherTask);
+        cleanup(otherTask);
 
         remover();
 
         process.exit(0);
+
         // @ts-ignore: code is actually reachable
         expect(otherTask).toBeCalledTimes(1);
         // @ts-ignore: code is actually reachable
         expect(task).not.toBeCalled();
+        // @ts-ignore: code is actually reachable
+        expect(mockExit).toBeCalled();
+    });
+
+    it('does not call functions prematurely', () => {
+        const task = jest.fn(() => {});
+
+        cleanup(task);
+
+        expect(task).not.toBeCalled();
+
+        process.exit(0);
+
+        // @ts-ignore: code is actually reachable
+        expect(task).toBeCalled();
+        // @ts-ignore: code is actually reachable
+        expect(mockExit).toBeCalled();
+    });
+
+    it('waits for promises to complete', (done) => {
+        const asyncTask = jest.fn(
+            async () =>
+                new Promise<void>(() => {
+                    setTimeout(() => {
+                        done();
+                    }, 100);
+                })
+        );
+
+        cleanup(asyncTask);
+
+        expect(asyncTask).not.toBeCalled();
+
+        process.exit(0);
+
+        // @ts-ignore: code is actually reachable
+        expect(asyncTask).toBeCalled();
         // @ts-ignore: code is actually reachable
         expect(mockExit).toBeCalled();
     });
