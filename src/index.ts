@@ -28,9 +28,11 @@ const cleanup = () => {
     });
 
     return function schedule(task: Task) {
-        tasks.push(task);
+        const index = tasks.push(task) - 1;
 
-        return () => tasks.pop();
+        return () => {
+            tasks.splice(index, 1);
+        };
     };
 };
 
