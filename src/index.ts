@@ -13,7 +13,7 @@ const cleanup = () => {
 
         await Promise.all(tasks.map(async (task) => await task()));
 
-        process.exit();
+        process.exit(0);
     });
 
     process.on('SIGINT', () => {

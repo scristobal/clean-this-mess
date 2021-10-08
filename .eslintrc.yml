@@ -1,6 +1,7 @@
 env:
     node: true
     es2021: true
+    jest: true
 
 parser: '@typescript-eslint/parser'
 extends:
@@ -12,5 +13,7 @@ parserOptions:
     sourceType: module
 plugins:
     - '@typescript-eslint'
+    - 'import'
+    - 'jest'
 
 rules: { '@typescript-eslint/explicit-module-boundary-types': 'off' }

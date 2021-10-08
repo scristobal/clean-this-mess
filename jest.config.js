@@ -1,4 +1,4 @@
-export default () => ({
+module.exports = {
     verbose: true,
     moduleNameMapper: {
         '^@App/(.*)$': '<rootDir>/src/$1',
@@ -13,4 +13,4 @@ export default () => ({
         },
     },
     testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/build/'],
-});
+}
