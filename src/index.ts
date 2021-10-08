@@ -5,7 +5,7 @@ const { yellowBright, redBright, red } = chalk;
 
 type Task = () => void | Promise<void>;
 
-const cleanup = () => {
+const cleanup = function () {
     const tasks: Task[] = [];
 
     process.on('exit', async () => {
@@ -34,6 +34,6 @@ const cleanup = () => {
             tasks.splice(index, 1);
         };
     };
-};
+}.call(undefined);
 
-export { cleanup };
+export default cleanup;
