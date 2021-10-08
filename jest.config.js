@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     verbose: true,
     moduleNameMapper: {
         '^@App/(.*)$': '<rootDir>/src/$1',

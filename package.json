@@ -1,6 +1,6 @@
 {
   "name": "clean-this-mess",
-  "version": "0.0.2-0",
+  "version": "0.0.2-beta1",
   "description": "A simple utility to subscribe and run tasks before closing a nodejs program",
   "main": "build/index.js",
   "type": "module",
