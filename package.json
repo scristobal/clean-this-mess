@@ -3,6 +3,7 @@
   "version": "0.0.2-0",
   "description": "A simple utility to subscribe and run tasks before closing a nodejs program",
   "main": "build/index.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "watcher": "jest --watch",
