@@ -11,6 +11,8 @@ beforeEach(() => {
             process.emit('exit', 0);
         }) // @ts-ignore
         .mockImplementation(() => {});
+
+    cleanup.empty();
 });
 
 describe('mock exit', () => {
@@ -27,6 +29,8 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
         const task = jest.fn(() => {});
 
         cleanup(task);
+
+        expect(cleanup.size).toBe(1);
 
         process.exit(0);
 
@@ -54,6 +58,8 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
         cleanup(task);
         cleanup(otherTask);
 
+        expect(cleanup.size).toBe(2);
+
         process.exit(0);
 
         // @ts-ignore: code is actually reachable
@@ -70,9 +76,15 @@ describe('clean-this-mess 🧹 🧹 🧹 ', () => {
 
         const remover = cleanup(task);
 
+        expect(cleanup.size).toBe(1);
+
         cleanup(otherTask);
 
+        expect(cleanup.size).toBe(2);
+
         remover();
+
+        expect(cleanup.size).toBe(1);
 
         process.exit(0);
 

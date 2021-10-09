@@ -1,39 +1,45 @@
 import { log } from 'console';
-import chalk from 'chalk';
-
-const { yellowBright, redBright, red } = chalk;
 
 type Task = () => void | Promise<void>;
 
 const cleanup = function () {
     const tasks: Task[] = [];
 
-    process.on('exit', async () => {
-        log(yellowBright(`\nRunning ${tasks.length} scheduled tasks... : 🧹 `));
+    process.on('exit', () => {
+        log(`\nRunning ${tasks.length} scheduled tasks... : 🧹 `);
 
-        await Promise.all(tasks.map(async (task) => await task()));
+        async function runAsyncQueue() {
+            await Promise.all(tasks.map(async (task) => await task()));
 
-        process.exit(0);
+            process.exit(0);
+        }
+
+        runAsyncQueue();
     });
 
     process.on('SIGINT', () => {
-        log(redBright(`\nGracefully shutting down from SIGINT (Ctrl-C)`));
+        log(`\nGracefully shutting down from SIGINT (Ctrl-C)`);
         process.exit(2);
     });
 
     process.on('uncaughtException', (error) => {
-        console.log(red(`\nExiting not so gracefully due to an uncaught Exception...`));
+        console.log(`\nExiting not so gracefully due to an uncaught Exception...`);
         console.log(error.stack);
         process.exit(99);
     });
 
-    return function schedule(task: Task) {
+    function schedule(task: Task) {
         const index = tasks.push(task) - 1;
 
         return () => {
             tasks.splice(index, 1);
         };
-    };
+    }
+
+    Object.defineProperty(schedule, 'size', { get: () => tasks.length });
+    Object.defineProperty(schedule, 'empty', { get: () => () => (tasks.length = 0) });
+
+    return schedule as ((task: Task) => () => void) & { size: number; empty: () => void };
 }.call(undefined);
 
 export default cleanup;
