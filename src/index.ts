@@ -22,6 +22,11 @@ const cleanup = function () {
         process.exit(2);
     });
 
+    process.on('SIGTERM', () => {
+        log(`\nGracefully shutting down from SIGTERM (Ctrl-C)`);
+        process.exit(15);
+    });
+
     process.on('uncaughtException', (error) => {
         console.log(`\nExiting not so gracefully due to an uncaught Exception...`);
         console.log(error.stack);
